@@ -1,0 +1,7 @@
+Turn light on:
+
+	curl -i -H "Accept: application/json" -X PUT -d "{\"on\":true}" http://192.168.2.196/api/newdeveloper/lights/1/state
+
+Turn light off:
+
+	curl -i -H "Accept: application/json" -X PUT -d "{\"on\":false}" http://192.168.2.196/api/newdeveloper/lights/1/state
