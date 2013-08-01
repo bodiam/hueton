@@ -6,8 +6,49 @@ from collections import defaultdict
 
 location = "http://192.168.2.196/api/newdeveloper"
 
+#
+# Hue API
+#
+def hue_get_lamp_state(lamp_number):
+
+	result = hue_get("/lights/" + lamp_number)
+	parsed = json.loads(result)
+	state = parsed['state']['on']
+
+	return state	
+
+def hue_set_lamp_color(lamp_number, saturation, brightness, hue):
+	# {"on":true, "sat":255, "bri":255,"hue":10000}
+	payload = json.dumps({"on":True, "sat": int(saturation), "bri": int(brightness), "hue": int(hue)})
+
+	print payload
+
+	hue_set_lamp_state(lamp_number, payload)
+
+def hue_turn_lamp_on(lamp_number):
+	payload = json.dumps({"on":True})
+	hue_set_lamp_state(lamp_number, payload)
+
+def hue_turn_lamp_off(lamp_number):
+	payload = json.dumps({"on":False})
+	hue_set_lamp_state(lamp_number, payload)
+
+def hue_set_lamp_state(lamp_number, payload):
+	hue_put("/lights/"+ lamp_number + "/state", payload)
+
+def hue_get(function):
+	return requests.get(location + function).content
+
+def hue_put(function, payload):
+	return requests.put(location + function, data=payload)
+
+#
+# Main programs
+#
 def clear_screen():
-	print chr(27) + "[2J"
+
+	print
+	#print chr(27) + "[2J"
 
 def show_menu():
 
@@ -15,7 +56,7 @@ def show_menu():
 		'1':[register_new_user,'Register new user'],
 		'2':[show_all_lamps,'Show all lamps'],
 	        '3':[show_turn_lamps_on_off,'Turn lamps on/off'],
-	        '4':[colorize_lamps,'Colorize lamps'],
+	        '4':[show_colorize_lamps,'Colorize lamps'],
 	        '5':[use_leapmotion,'Use leapmotion'],
 	        'E':[sys.exit, 'Exit']
 	})
@@ -64,31 +105,6 @@ def title(text):
 	print text + ":\n"
 
 
-def hue_get_lamp_state(lamp_number):
-
-	result = hue_get("/lights/" + lamp_number)
-	parsed = json.loads(result)
-	state = parsed['state']['on']
-
-	return state	
-
-def hue_turn_lamp_on(lamp_number):
-	payload = json.dumps({"on":True})
-	hue_set_lamp_state(lamp_number, payload)
-
-def hue_turn_lamp_off(lamp_number):
-	payload = json.dumps({"on":False})
-	hue_set_lamp_state(lamp_number, payload)
-
-def hue_set_lamp_state(lamp_number, payload):
-	hue_put("/lights/"+ lamp_number + "/state", payload)
-
-def hue_get(function):
-	return requests.get(location + function).content
-
-def hue_put(function, payload):
-	return requests.put(location + function, data=payload)
-
 
 def show_turn_lamps_on_off():
 
@@ -122,15 +138,34 @@ def get_input_lamp_number():
 	return lamp_number
 
 
-def colorize_lamps():
+def show_colorize_lamps():
 
-	print "Colorize lamps"
+	title("Colorize lamps")
+
+	print_lamps()
+
+	# Choose the lamp
+	lamp_number = get_input_lamp_number()
+
+	# TODO: read current lamp settings
+
+	# Choose the action
+	saturation = read_input("Saturation (intesity) [0-255] :") or '255'
+	brightness = read_input("Brightness [0-255] :") or '255'
+	hue = read_input("Hue [0-65535] :") or '10000'
+
+	hue_set_lamp_color(lamp_number, saturation, brightness, hue)
+
 	show_menu()
 
 def use_leapmotion():
 	print "Use leapmotion"
 	show_menu()
 
+def read_input(text):
+	return raw_input(text)
+
 show_menu()
+
 
 
