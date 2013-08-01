@@ -14,7 +14,7 @@ def show_menu():
 	menu = defaultdict(list, { 
 		'1':[register_new_user,'Register new user'],
 		'2':[show_all_lamps,'Show all lamps'],
-	        '3':[turn_lamps_on_off,'Turn lamps on/off'],
+	        '3':[show_turn_lamps_on_off,'Turn lamps on/off'],
 	        '4':[colorize_lamps,'Colorize lamps'],
 	        '5':[use_leapmotion,'Use leapmotion'],
 	        'E':[sys.exit, 'Exit']
@@ -36,8 +36,6 @@ def show_menu():
 	func()
 
 
-def get(function):
-	return requests.get(location + function).content
 
 def register_new_user():
 
@@ -46,28 +44,73 @@ def register_new_user():
 
 def show_all_lamps():
 
-	_print_lamps()
+	print_lamps()
 
 	show_menu()
 
-def _print_lamps():
+def print_lamps():
+
+        title("Show all lamps")
 
         # {"1":{"name": "Hue Lamp 1"},"2":{"name": "Hue Lamp 2"},"3":{"name": "Hue Lamp 3"}}
-        result = get("/lights")
-
+        result = hue_get("/lights")
         parsed = json.loads(result)
 
-        print "Show all lamps:\n"
-
         for key in sorted(parsed.keys()):
-                print "%s = %s" % (key, parsed[key]['name'])
+		state = hue_get_lamp_state(key)
+                print "lamp:%s, name=%s, state=%s" % (key, parsed[key]['name'], state)
 
-def turn_lamps_on_off():
+def title(text): 
+	print text + ":\n"
 
-	print "Turn lamps on / off:"
 
-	_print_lamps()
+def hue_get_lamp_state(lamp_number):
 
+	result = hue_get("/lights/" + lamp_number)
+	parsed = json.loads(result)
+	state = parsed['state']['on']
+
+	return state	
+
+def hue_turn_lamp_on(lamp_number):
+	payload = json.dumps({"on":True})
+	hue_set_lamp_state(lamp_number, payload)
+
+def hue_turn_lamp_off(lamp_number):
+	payload = json.dumps({"on":False})
+	hue_set_lamp_state(lamp_number, payload)
+
+def hue_set_lamp_state(lamp_number, payload):
+	hue_put("/lights/"+ lamp_number + "/state", payload)
+
+def hue_get(function):
+	return requests.get(location + function).content
+
+def hue_put(function, payload):
+	return requests.put(location + function, data=payload)
+
+
+def show_turn_lamps_on_off():
+
+	title("Turn lamps [on/off]:")
+
+	print_lamps()
+		
+	# Choose the lamp
+	lamp_number = get_input_lamp_number()
+	state = hue_get_lamp_state(lamp_number)
+
+	# Choose the action
+	input = raw_input("Turn lamp %s [on] or [off]: " % lamp_number)
+
+	if input == "on":
+		hue_turn_lamp_on(lamp_number)
+	else:
+		hue_turn_lamp_off(lamp_number)
+
+	show_turn_lamps_on_off()
+
+def get_input_lamp_number():
 	lamp_number = raw_input("Please choose a lamp number (E=Exit menu): ")
 
 	if not lamp_number:
@@ -76,26 +119,8 @@ def turn_lamps_on_off():
 	if lamp_number == "E":
 		show_all_lamps()
 
-	result = get("/lights/" + lamp_number)
+	return lamp_number
 
-	parsed = json.loads(result)
-	state = parsed['state']['on']
-
-	if state:
-		message = "Lamp is on. [on/off]"
-	else:
-		message = "Lamp is off. [on/off]"
-
-	input = raw_input(message)
-
-	if input == "on":
-		payload = json.dumps({"on": True})
-	else:
-		payload = json.dumps({"on": False})
-
-	r = requests.put("http://192.168.2.196/api/newdeveloper/lights/" + lamp_number + "/state", data = payload)
-
-	turn_lamps_on_off()
 
 def colorize_lamps():
 
