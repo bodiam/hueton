@@ -10,7 +10,6 @@ location = "http://192.168.2.196/api/newdeveloper"
 # Hue API
 #
 def hue_get_lamp_state(lamp_number):
-
 	result = hue_get("/lights/" + lamp_number)
 	parsed = json.loads(result)
 	state = parsed['state']['on']
@@ -20,9 +19,6 @@ def hue_get_lamp_state(lamp_number):
 def hue_set_lamp_color(lamp_number, saturation, brightness, hue):
 	# {"on":true, "sat":255, "bri":255,"hue":10000}
 	payload = json.dumps({"on":True, "sat": int(saturation), "bri": int(brightness), "hue": int(hue)})
-
-	print payload
-
 	hue_set_lamp_state(lamp_number, payload)
 
 def hue_turn_lamp_on(lamp_number):
