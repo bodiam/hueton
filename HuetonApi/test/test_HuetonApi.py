@@ -16,7 +16,6 @@ from HuetonApi.HuetonApi import *
 
 
 class TestHuetonapi(unittest.TestCase):
-
     def setUp(self):
         pass
 
@@ -25,10 +24,10 @@ class TestHuetonapi(unittest.TestCase):
 
     def tearDown(self):
         pass
-           
+
     def test_hello_world(self):
         print("hello")
-        self.assertEquals(4,4)
+        self.assertEquals(4, 4)
 
     def test_register_new_developer(self):
         api = HuetonApi()
