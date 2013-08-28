@@ -38,3 +38,15 @@ var = raw_input("enter something: ")
 
 if not var:
 	println "you didn't type anything!"
+
+
+:::::: Installing pip3 ::::::::::::
+
+curl -O http://python-distribute.org/distribute_setup.py
+sudo python3 distribute_setup.py
+
+curl -O https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+sudo python3 get-pip.py
+
+export PATH=/Library/Frameworks/Python.framework/Versions/3.3/bin:$PATH
+pip --version
