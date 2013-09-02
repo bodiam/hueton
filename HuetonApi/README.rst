@@ -11,6 +11,9 @@ HuetonApi
 .. image:: https://pypip.in/d/HuetonApi/badge.png
         :target: https://crate.io/packages/HuetonApi?version=latest
 
+.. image:: https://drone.io/github.com/bodiam/hueton/status.png
+	:target: https://drone.io/github.com/bodiam/hueton/latest
+
 
 Python API for Philips Hue
 
