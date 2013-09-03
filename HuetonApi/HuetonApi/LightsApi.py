@@ -1,7 +1,6 @@
 from HuetonApi.HueApi import HueApi
 import json
 
-
 class LightsApi(HueApi):
     def init(self, developer_name):
         print("Hello %s" % developer_name)
@@ -23,7 +22,7 @@ class LightsApi(HueApi):
 
 
 class LightResponse:
-    def __init__(self, lastscan = None):
+    def __init__(self, lastscan=None):
         self.lastscan = lastscan
         self.lights = []
 
