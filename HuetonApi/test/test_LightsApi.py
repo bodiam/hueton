@@ -1,56 +1,40 @@
 import unittest
-import HuetonApi.LightsApi
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from HuetonApi.LightsApi import LightsApi
 
 
+@patch('HuetonApi.HueApi.requests')
 class MyTestCase(unittest.TestCase):
     def setUp(self):
-        # See http://stackoverflow.com/questions/11399148/how-to-mock-an-http-request-in-a-unit-testing-scenario-in-python
-        # http://stackoverflow.com/questions/15753390/python-mock-requests-and-the-response
-        mock = Mock()
-        # mock.return_value = "{}"
+        lights_api = LightsApi()
+        lights_api.init('newdeveloper')
 
-        self.mock_requests = mock
-        self.old_requests = HuetonApi.HueApi.requests
-        HuetonApi.HueApi.requests = self.mock_requests
+        self.api = lights_api
 
-    def tearDown(self):
-        # It is very important that each unit test be isolated, so we need
-        # to be good citizen and clean up after ourselves. This means that
-        # we need to put back the correct `requests` module where it was
-        HuetonApi.HueApi.requests.requests = self.old_requests
-
-    # @patch('HuetonApi.HueApi.requests.get', Mock(side_effect=lambda k: {'aurl': 'a response', 'burl': 'b response'}.get(k, 'unhandled request %s' % k)))
-    @patch('HuetonApi.HueApi.requests.get')
     def test_get_all_lights(self, mock_requests):
-        self.mock_requests.get.return_value = Response(text='{"1": { "name": "Bedroom"},"2": { "name": "Kitchen"}}')
+        mock_requests.get.return_value = Response(text='''{
+        "1": { "name": "Bedroom"},
+        "2": { "name": "Kitchen"}
+        }''')
 
-        api = LightsApi()
-        api.init("newdeveloper")
-        lights = api.get_all_lights()
-
-        # self.mock_requests.get().return_value = '{"1": { "name": "Bedroom"},"2": { "name": "Kitchen"}}'
-
-        # self.mock_requests.get.assert_called_with(url)
+        lights = self.api.get_all_lights()
 
         self.assertEqual(2, len(lights))
 
-        # def test_get_new_lights(self):
-        #
-        #
-        # // given response
-        # mock.response = {
-        #     "7": {"name": "Hue Lamp 7"},
-        #     "8": {"name": "Hue Lamp 8"},
-        #     "lastscan": "2012-10-29T12:00:00"
-        # }
-        # // when calling get_all_lights
-        # light_api.get_all_light
-        #
-        # // then
-        # assert something
+    def test_get_new_lights(self, mock_requests):
+        mock_requests.get.return_value = Response(text='''{
+        "7": {"name": "Hue Lamp 7"},
+        "8": {"name": "Hue Lamp 8"},
+        "lastscan": "2012-10-29T12:00:00"
+        }''')
+
+        scan = self.api.get_new_lights()
+
+        self.assertEqual(2, len(scan.lights))
+        self.assertEqual('2012-10-29T12:00:00', scan.lastscan)
+
+
 
 
 class Response:

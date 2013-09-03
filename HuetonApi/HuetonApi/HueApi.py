@@ -1,6 +1,7 @@
 import requests
 import json
 
+
 class HueApi:
     def hue_get_lamp_state(self, lamp_number):
         result = self.hue_get("/lights/" + lamp_number)
@@ -26,10 +27,6 @@ class HueApi:
         self.hue_put("/lights/" + lamp_number + "/state", payload)
 
     def hue_get(self, function):
-
-        print(requests.get(self.location + function))
-        print(requests.get(self.location + function).text)
-
         return requests.get(self.location + function).text
 
     def hue_put(self, function, payload):

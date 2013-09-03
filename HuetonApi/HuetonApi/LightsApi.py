@@ -18,11 +18,15 @@ class LightsApi(HueApi):
         result = self.hue_get("/lights/new")
         parsed = json.loads(result)
 
-        return [Light(id, parsed[id]["name"]) for id in parsed]
+        scan = Scan(lastscan=parsed["lastscan"])
+        parsed.pop("lastscan", None)
+
+        scan.lights.extend([Light(id, parsed[id]["name"]) for id in parsed])
+        return scan
 
 
-class LightResponse:
-    def __init__(self, lastscan=None):
+class Scan:
+    def __init__(self, lastscan):
         self.lastscan = lastscan
         self.lights = []
 
