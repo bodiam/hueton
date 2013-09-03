@@ -33,12 +33,13 @@ class TestHuetonapi(unittest.TestCase):
         ''')
 
         api = HuetonApi()
-        api.init('username')
+        api.init('newdeveloper')
         self.assertFalse(api.connect())
 
-        mock_requests.get.return_value = Response(text='''[{"success":{"username": "1234567890"}}]''')
+        mock_requests.post.return_value = Response(text='''[{"devicetype":"test user","username":"newdeveloper"}]''')
         api.register()
 
+        mock_requests.get.return_value = Response(text='''[{"success":{"username": "1234567890"}}]''')
         self.assertTrue(api.connect())
 
 
