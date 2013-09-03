@@ -1,15 +1,16 @@
 import unittest
 import HuetonApi.LightsApi
 
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from HuetonApi.LightsApi import LightsApi
 
 
 class MyTestCase(unittest.TestCase):
     def setUp(self):
         # See http://stackoverflow.com/questions/11399148/how-to-mock-an-http-request-in-a-unit-testing-scenario-in-python
+        # http://stackoverflow.com/questions/15753390/python-mock-requests-and-the-response
         mock = Mock()
-        mock.return_value = "{}"
+        # mock.return_value = "{}"
 
         self.mock_requests = mock
         self.old_requests = HuetonApi.HueApi.requests
@@ -21,18 +22,20 @@ class MyTestCase(unittest.TestCase):
         # we need to put back the correct `requests` module where it was
         HuetonApi.HueApi.requests.requests = self.old_requests
 
-    def test_get_all_lights(self):
+    # @patch('HuetonApi.HueApi.requests.get', Mock(side_effect=lambda k: {'aurl': 'a response', 'burl': 'b response'}.get(k, 'unhandled request %s' % k)))
+    @patch('HuetonApi.HueApi.requests.get')
+    def test_get_all_lights(self, mock_requests):
+        self.mock_requests.get.return_value = Response(text='{"1": { "name": "Bedroom"},"2": { "name": "Kitchen"}}')
+
         api = LightsApi()
         api.init("newdeveloper")
         lights = api.get_all_lights()
 
         # self.mock_requests.get().return_value = '{"1": { "name": "Bedroom"},"2": { "name": "Kitchen"}}'
 
-        url = "http://example.com"
+        # self.mock_requests.get.assert_called_with(url)
 
-        self.mock_requests.get.assert_called_with(url)
-
-        self.assertEqual(3, len(lights))
+        self.assertEqual(2, len(lights))
 
         # def test_get_new_lights(self):
         #
@@ -48,6 +51,11 @@ class MyTestCase(unittest.TestCase):
         #
         # // then
         # assert something
+
+
+class Response:
+    def __init__(self, text):
+        self.text = text
 
 
 if __name__ == '__main__':
