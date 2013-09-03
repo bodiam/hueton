@@ -11,6 +11,19 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(3, len(lights))
 
+    def test_get_new_lights(self):
+
+        // given response
+        {
+            "7": {"name": "Hue Lamp 7"},
+            "8": {"name": "Hue Lamp 8"},
+            "lastscan": "2012-10-29T12:00:00"
+        }
+        // when calling get_all_lights
+
+
+        // then
+
 
 if __name__ == '__main__':
     unittest.main()
