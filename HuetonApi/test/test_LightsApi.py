@@ -1,7 +1,7 @@
 import unittest
 
 from unittest.mock import patch
-from HuetonApi.LightsApi import LightsApi
+from HuetonApi.LightsApi import LightsApi, SearchError
 from test.MockResponse import MockResponse
 
 
@@ -44,14 +44,12 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual("Searching for new devices", response)
 
-    # def test_search_error(self, mock_requests):
-    #     mock_requests.post.return_value = Response(text='''
-    #     [ { "error": { "/lights": "Searching for new devices" } } ]
-    #     ''')
-    #
-    #     response = self.api.search_for_new_lights()
-    #
-    #     self.assertEqual("Searching for new devices", response)
+    def test_search_error(self, mock_requests):
+        mock_requests.post.return_value = MockResponse(text='''
+        [ { "error": { "/lights": "Searching for new devices" } } ]
+        ''')
+
+        self.assertRaisesRegexp(SearchError, ".*Searching for new devices.*", self.api.search_for_new_lights)
 
 
 if __name__ == '__main__':
