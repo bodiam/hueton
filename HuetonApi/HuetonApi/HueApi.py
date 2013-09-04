@@ -35,7 +35,7 @@ class HueApi:
         return requests.get(self.location + function).text
 
     def hue_put(self, function, payload):
-        return requests.put(self.location + function, data=payload)
+        return requests.put(self.location + function, data=payload).text
 
-    def hue_post(self, function, payload):
-        return requests.post(self.location + function, data=payload)
+    def hue_post(self, function, payload=None):
+        return requests.post(self.location + function, data=payload).text

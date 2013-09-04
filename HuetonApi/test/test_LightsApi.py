@@ -2,7 +2,7 @@ import unittest
 
 from unittest.mock import patch
 from HuetonApi.LightsApi import LightsApi
-from test.Response import Response
+from test.MockResponse import MockResponse
 
 
 @patch('HuetonApi.HueApi.requests')
@@ -14,7 +14,7 @@ class MyTestCase(unittest.TestCase):
         self.api = lights_api
 
     def test_get_all_lights(self, mock_requests):
-        mock_requests.get.return_value = Response(text='''{
+        mock_requests.get.return_value = MockResponse(text='''{
         "1": { "name": "Bedroom"},
         "2": { "name": "Kitchen"}
         }''')
@@ -24,7 +24,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(2, len(lights))
 
     def test_get_new_lights(self, mock_requests):
-        mock_requests.get.return_value = Response(text='''{
+        mock_requests.get.return_value = MockResponse(text='''{
         "7": {"name": "Hue Lamp 7"},
         "8": {"name": "Hue Lamp 8"},
         "lastscan": "2012-10-29T12:00:00"
@@ -34,6 +34,24 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(2, len(scan.lights))
         self.assertEqual('2012-10-29T12:00:00', scan.lastscan)
+
+    def test_search(self, mock_requests):
+        mock_requests.post.return_value = MockResponse(text='''
+        [ { "success": { "/lights": "Searching for new devices" } } ]
+        ''')
+
+        response = self.api.search_for_new_lights()
+
+        self.assertEqual("Searching for new devices", response)
+
+    # def test_search_error(self, mock_requests):
+    #     mock_requests.post.return_value = Response(text='''
+    #     [ { "error": { "/lights": "Searching for new devices" } } ]
+    #     ''')
+    #
+    #     response = self.api.search_for_new_lights()
+    #
+    #     self.assertEqual("Searching for new devices", response)
 
 
 if __name__ == '__main__':
