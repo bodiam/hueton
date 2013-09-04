@@ -10,6 +10,7 @@ Tests for `HuetonApi` module.
 
 import unittest
 from unittest.mock import patch
+from test.MockResponse import MockResponse
 
 from HuetonApi.HuetonApi import *
 
@@ -20,7 +21,7 @@ class TestHuetonapi(unittest.TestCase):
         self.assertEquals(4, 4)
 
     def test_register_new_developer(self, mock_requests):
-        mock_requests.get.return_value = Response(text='''
+        mock_requests.get.return_value = MockResponse(text='''
         [
             {
                 "error": {
@@ -36,16 +37,11 @@ class TestHuetonapi(unittest.TestCase):
         api.init('newdeveloper')
         self.assertFalse(api.connect())
 
-        mock_requests.post.return_value = Response(text='''[{"devicetype":"test user","username":"newdeveloper"}]''')
+        mock_requests.post.return_value = MockResponse(text='''[{"devicetype":"test user","username":"newdeveloper"}]''')
         api.register()
 
-        mock_requests.get.return_value = Response(text='''[{"success":{"username": "1234567890"}}]''')
+        mock_requests.get.return_value = MockResponse(text='''[{"success":{"username": "1234567890"}}]''')
         self.assertTrue(api.connect())
-
-
-class Response:
-    def __init__(self, text):
-        self.text = text
 
 
 if __name__ == '__main__':
