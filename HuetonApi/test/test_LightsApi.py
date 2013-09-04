@@ -34,6 +34,24 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(2, len(scan.lights))
         self.assertEqual('2012-10-29T12:00:00', scan.lastscan)
 
+    def test_search(self, mock_requests):
+        mock_requests.post.return_value = Response(text='''
+        [ { "success": { "/lights": "Searching for new devices" } } ]
+        ''')
+
+        response = self.api.search_for_new_lights()
+
+        self.assertEqual("Searching for new devices", response)
+
+    # def test_search_error(self, mock_requests):
+    #     mock_requests.post.return_value = Response(text='''
+    #     [ { "error": { "/lights": "Searching for new devices" } } ]
+    #     ''')
+    #
+    #     response = self.api.search_for_new_lights()
+    #
+    #     self.assertEqual("Searching for new devices", response)
+
 
 
 
