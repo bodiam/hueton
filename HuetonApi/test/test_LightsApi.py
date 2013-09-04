@@ -51,6 +51,44 @@ class MyTestCase(unittest.TestCase):
 
         self.assertRaisesRegexp(SearchError, ".*Searching for new devices.*", self.api.search_for_new_lights)
 
+    def test_get_light_attribute_and_state(self, mock_requests):
+        mock_requests.get.return_value = MockResponse(text='''
+        {
+            "state": {
+                "hue": 50000,
+                "on": true,
+                "effect": "none",
+                "alert": "none",
+                "bri": 200,
+                "sat": 200,
+                "ct": 500,
+                "xy": [0.5, 0.5],
+                "reachable": true,
+                "colormode": "hs"
+            },
+            "type": "Living Colors",
+            "name": "LC 1",
+            "modelid": "LC0015",
+            "swversion": "1.0.3",
+            "pointsymbol": {
+                "1": "none",
+                "2": "none",
+                "3": "none",
+                "4": "none",
+                "5": "none",
+                "6": "none",
+                "7": "none",
+                "8": "none"
+            }
+        }
+        ''')
+
+        light_state = self.api.get_light_attributes_and_state(1)
+
+        self.assertEqual("Living Colors", light_state.type)
+        self.assertEqual("LC 1", light_state.name)
+        self.assertEqual("LC0015", light_state.modelid)
+
 
 if __name__ == '__main__':
     unittest.main()

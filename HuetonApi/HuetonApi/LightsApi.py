@@ -47,11 +47,51 @@ class LightsApi(HueApi):
             raise SearchError("Error, invalid response: {}".format(result))
 
 
-    def get_light_attributes_and_state(self):
+    def get_light_attributes_and_state(self, id):
         """
         Gets the attributes and state of a given light.
+
+        Example:
+        {
+            "state": {
+                "hue": 50000,
+                "on": true,
+                "effect": "none",
+                "alert": "none",
+                "bri": 200,
+                "sat": 200,
+                "ct": 500,
+                "xy": [0.5, 0.5],
+                "reachable": true,
+                "colormode": "hs"
+            },
+            "type": "Living Colors",
+            "name": "LC 1",
+            "modelid": "LC0015",
+            "swversion": "1.0.3",
+            "pointsymbol": {
+                "1": "none",
+                "2": "none",
+                "3": "none",
+                "4": "none",
+                "5": "none",
+                "6": "none",
+                "7": "none",
+                "8": "none"
+            }
+        }
         """
-        pass
+        result = self.hue_get("/lights/" + str(id))
+        parsed = json.loads(result)
+
+        light_state = LightState()
+        light_state.type = parsed["type"]
+        light_state.name = parsed["name"]
+        light_state.modelid = parsed["modelid"]
+        light_state.swversion = parsed["swversion"]
+        light_state.state = State()
+
+        return light_state
 
     def rename(self, id, name):
         """
@@ -89,3 +129,39 @@ class Light:
         self.name = name
 
 
+class LightState:
+    state = type = name = modelid = swversion = pointsymbol = None
+
+
+#     "type": "Living Colors",
+# "name": "LC 1",
+# "modelid": "LC0015",
+# "swversion": "1.0.3",
+# "pointsymbol": {
+#     "1": "none",
+#     "2": "none",
+#     "3": "none",
+#     "4": "none",
+#     "5": "none",
+#     "6": "none",
+#     "7": "none",
+#     "8": "none"
+# }
+
+
+class State:
+    state = hue = effect = alert = bri = sat = ct = xy = reachable = colormode = None
+
+#     "hue": 50000,
+#     "on": true,
+#     "effect": "none",
+#     "alert": "none",
+#     "bri": 200,
+#     "sat": 200,
+#     "ct": 500,
+#     "xy": [0.5, 0.5],
+#     "reachable": true,
+#     "colormode": "hs"
+#
+#     def __init__(self):
+#
