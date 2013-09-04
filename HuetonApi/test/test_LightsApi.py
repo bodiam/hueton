@@ -2,6 +2,7 @@ import unittest
 
 from unittest.mock import patch
 from HuetonApi.LightsApi import LightsApi
+from test.Response import Response
 
 
 @patch('HuetonApi.HueApi.requests')
@@ -33,13 +34,6 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(2, len(scan.lights))
         self.assertEqual('2012-10-29T12:00:00', scan.lastscan)
-
-
-
-
-class Response:
-    def __init__(self, text):
-        self.text = text
 
 
 if __name__ == '__main__':

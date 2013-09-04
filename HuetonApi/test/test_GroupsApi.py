@@ -1,72 +1,39 @@
 import unittest
 
-from HuetonApi.GroupsApi import GroupsApi, Group
+from unittest.mock import patch
+from HuetonApi.GroupsApi import GroupsApi
+from test.Response import Response
 
 # Test for GroupsApi Class
+
+
+@patch('HuetonApi.HueApi.requests')
 class TestGroupsApi(unittest.TestCase):
-    def test_addGroup(self):
-        gApi = GroupsApi()
-        group = Group("Test Group")
-        gApi.addGroup(group)
+    def setUp(self):
+        developer = 'newdeveloper'
+        bridge = 'http://192.168.2.196/api/'
+        groups_api = GroupsApi(developer, bridge)
+        self.api = groups_api
 
-        self.assertEqual(1, len(gApi.groups))
+    def test_get_all_groups(self, mock_requests):
+        mock_requests.get.return_value = Response(text='''{
+        "1": { "name": "Group 1" },
+        "2": { "name": "VRC 2" }
+        }''')
 
-    def test_removeGroup(self):
-        gApi = GroupsApi()
-        group1 = Group("Test Group 1")
-        group2 = Group("Test Group 2")
+        groups = self.api.get_all_groups()
 
-        gApi.addGroup(group1)
-        gApi.addGroup(group2)
+        self.assertEqual(2, len(groups))
 
-        self.assertEqual(2, len(gApi.groups))
+#  def test_create_group(self):
 
-        gApi.removeGroup(group2)
+#    def test_get_group_attributes(self):
 
-        self.assertEqual(1, len(gApi.groups))
+#    def test_set_group_attributes(self):
 
-    def test_addLightToGroup(self):
-        gApi = GroupsApi()
-        group1 = Group("Test Group 1")
-        gApi.addGroup(group1)
+#    def test_set_group_state(self):
 
-        light = "will be a light"
-        gApi.addLightToGroup(group1, light)
-
-    def test_removeLightFromGroup(self):
-        gApi = GroupsApi()
-        group1 = Group("Test Group 1")
-        gApi.addGroup(group1)
-
-        light1 = "will be a light 1"
-        light2 = "will be a light 2"
-        gApi.addLightToGroup(group1, light1)
-        gApi.addLightToGroup(group1, light2)
-
-        self.assertEqual(2, gApi.getTotalLightsForGroup(group1))
-
-        gApi.get_all_groups()
-
-        gApi.removeLightFromGroup(group1, light2)
-
-        self.assertEqual(1, gApi.getTotalLightsForGroup(group1))
-
-        gApi.get_all_groups()
-
-    def test_get_all_Groups(self):
-        gApi = GroupsApi()
-
-        group1 = Group("Group1")
-        group2 = Group("Group2")
-        group3 = Group("Group3")
-
-        gApi.addGroup(group1)
-        gApi.addGroup(group2)
-        gApi.addGroup(group3)
-
-        total = gApi.get_all_groups()
-
-        self.assertEqual(3, total)
+#    def test_delete_group(self):
 
 
 if __name__ == '__main__':

@@ -3,11 +3,16 @@ import json
 
 
 class HueApi:
+    def init(self, developer_name, location):
+        print("Hello %s" % developer_name)
+        self.base_location = location
+        self.location = self.base_location + developer_name
+        self.developer_name = developer_name
+
     def hue_get_lamp_state(self, lamp_number):
         result = self.hue_get("/lights/" + lamp_number)
         parsed = json.loads(result)
         state = parsed['state']['on']
-
         return state
 
     def hue_set_lamp_color(self, lamp_number, saturation, brightness, hue):

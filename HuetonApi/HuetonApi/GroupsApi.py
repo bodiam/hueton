@@ -1,79 +1,42 @@
+from HuetonApi.HueApi import HueApi
+import json
 # Author: Enric Ballo
-
 # GroupsApi Class
-# We can have more than one group, and each group have one name and a list of lights
-# Example:
-# Groups['kitchenGroup','livingRoomGroup'...]
+
+
 class GroupsApi():
-    def __init__(self):
-        self.groups = []
-
-    def addGroup(self, groupToAdd):
-        self.groups.append(groupToAdd)
-
-    def removeGroup(self, group):
-        self.groups.remove(group)
-
-    def addLightToGroup(self, group, lightToAdd):
-        isGroup = False
-        for i in self.groups:
-            if (group == i):
-                isGroup = True
-                i.addLight(lightToAdd)
-
-        if (isGroup == False):
-            print("The Group dosen't exists")
-
-    def removeLightFromGroup(self, group, lightToRemove):
-        isGroup = False
-        for i in self.groups:
-            if (group == i):
-                isGroup = True
-                i.removeLight(lightToRemove)
-
-        if (isGroup == False):
-            print("The Group dosen't exists")
-
-    def getTotalLightsForGroup(self, group):
-        isGroup = False
-        total = 0
-        for i in self.groups:
-            if (group == i):
-                isGroup = True
-                total = i.get_all_lights()
-
-        if (isGroup == False):
-            print("The Group dosen't exists")
-
-        return total
+    def __init__(self, developer_name, location):
+        self.api = HueApi()
+        self.api.init(developer_name, location)
 
     def get_all_groups(self):
-        for i in self.groups:
-            print(i.printDetails())
-        return len(self.groups)
+        result = self.api.hue_get("/groups")
+        parsed = json.loads(result)
+        return [Group(id, parsed[id]["name"]) for id in parsed]
+
+    def create_group(self):
+        #check max=16
+        pass
+
+    def get_group_attributes(self):
+        pass
+
+    def set_group_attributes(self):
+        pass
+
+    def set_group_state(self):
+        pass
+
+    def delete_group(self):
+        pass
+
 
 # Group Class
-# Example:
-# kitchen (lamp1, lamp2, lamp3)        
 class Group():
-    def __init__(self, name):
+    def __init__(self, id, name):
+        self.id = id
         self.name = name
-        self.listOfLights = []
-
-    def changeNameGroup(self, newName):
-        self.name = newName
-
-    def addLight(self, light):
-        self.listOfLights.append(light)
-
-    def removeLight(self, light):
-        self.listOfLights.remove(light)
-
-    def get_all_lights(self):
-        return len(self.listOfLights)
 
     def printDetails(self):
+        print("ID : " + self.id)
         print("Name : " + self.name)
-        count = 0
-        for i in self.listOfLights:
-            print(str(count) + " - Light " + i)
