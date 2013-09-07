@@ -88,7 +88,7 @@ class Light:
         self.id = light_id
         self.name = name
 
-    def printDetails(self):
+    def print_details(self):
         print("Id :" + str(self.id))
         print("Name :" + self.name)
 

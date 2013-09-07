@@ -81,24 +81,24 @@ class Group():
         self.last_action = last_action
         self.scenes = scenes
 
-    def printDetails(self):
+    def print_details(self):
         print("Id : " + str(self.id))
         print("Name : " + self.group_name)
         print("== Last Action :")
-        print(self.last_action.printDetails())
+        print(self.last_action.print_details())
         print("== Lights Details")
         for light in self.lights:
-            print(light.printDetails())
+            print(light.print_details())
         print("== Scenes Details")
         for scene in self.scenes:
-            print(scene.printDetails())
+            print(scene.print_details())
 
 
 class Scene():
     def __init__(self):
         pass
 
-    def printDetails(self):
+    def print_details(self):
         print("Scenes not implemented")
 
 
@@ -112,7 +112,7 @@ class Action():
         self.ct = ct
         self.xy = xy
 
-    def printDetails(self):
+    def print_details(self):
         print("on :" + str(self.on))
         print("hue :" + str(self.hue))
         print("effect :" + self.effect)

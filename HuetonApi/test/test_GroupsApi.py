@@ -44,7 +44,7 @@ class TestGroupsApi(unittest.TestCase):
 
         groups = self.api.get_group_attributes(1)
 
-        groups.printDetails()
+        groups.print_details()
 
 #    def test_set_group_attributes(self):
 
