@@ -2,7 +2,7 @@ import unittest
 
 from unittest.mock import patch
 from HuetonApi.GroupsApi import GroupsApi
-from test.Response import Response
+from test.MockResponse import MockResponse
 
 # Test for GroupsApi Class
 
@@ -16,7 +16,7 @@ class TestGroupsApi(unittest.TestCase):
         self.api = groups_api
 
     def test_get_all_groups(self, mock_requests):
-        mock_requests.get.return_value = Response(text='''{
+        mock_requests.get.return_value = MockResponse(text='''{
         "1": { "name": "Group 1" },
         "2": { "name": "VRC 2" }
         }''')
@@ -25,9 +25,26 @@ class TestGroupsApi(unittest.TestCase):
 
         self.assertEqual(2, len(groups))
 
-#  def test_create_group(self):
+#    def test_create_group(self):
 
-#    def test_get_group_attributes(self):
+    def test_get_group_attributes(self, mock_requests):
+        mock_requests.get.return_value = MockResponse(text='''{
+        "action": { "on": true,
+                    "hue": 0,
+                    "effect": "none",
+                    "bri": 100,
+                    "sat": 100,
+                    "ct": 500,
+                    "xy": [0.5, 0.5]
+                  },
+        "lights": [ "1","2" ],
+        "name": "bedroom",
+        "scenes": {     }
+        }''')
+
+        groups = self.api.get_group_attributes(1)
+
+        groups.printDetails()
 
 #    def test_set_group_attributes(self):
 
