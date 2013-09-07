@@ -82,9 +82,6 @@ class Scan:
         self.lastscan = lastscan
         self.lights = []
 
-    def add_light(self, light):
-        self.lights.light
-
 
 class Light:
     def __init__(self, light_id, name=""):
