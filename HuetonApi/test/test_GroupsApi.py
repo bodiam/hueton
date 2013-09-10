@@ -46,7 +46,18 @@ class TestGroupsApi(unittest.TestCase):
 
         groups.print_details()
 
-#    def test_set_group_attributes(self):
+    def test_set_group_attributes(self, mock_requests):
+        mock_requests.put.return_value = MockResponse(text='''
+        [ {"success":{"/groups/1/lights":["1"]}},
+          {"success":{"/groups/1/name":"test_group"}}]''')
+
+        group_id = 1
+        group_name = 'test_group'
+        lights_id = ['1']
+
+        result = self.api.set_group_attributes(group_id, group_name, lights_id)
+
+        self.assertEqual("success", result)
 
 #    def test_set_group_state(self):
 

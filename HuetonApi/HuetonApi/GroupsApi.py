@@ -62,8 +62,30 @@ class GroupsApi():
         group = Group(group_id, group_name, lights, last_action, scenes)
         return group
 
-    def set_group_attributes(self):
-        pass
+    def set_group_attributes(self, group_id, group_name, lights_id):
+        """
+        Allows the user to modify the name and light membership of a group.
+
+        group_name    string 0..32    The new name for the group.
+                      If the name is already taken a space and number will
+                      be appended by the bridge e.g. “Custom Group 1”. Optional
+        lights_id    array of light IDs    The IDs of the lights that
+                     should be in the group. This resource must contain an
+                     array of at least one element.
+
+        If an invalid light ID is given, error 7 will be returned and the
+        group not created.
+        """
+        array_lights = '["' + '", "'.join(lights_id) + '"]'
+        body = '{"name":"' + group_name + '","lights":' + array_lights + '}'
+
+        result = self.api.hue_put("/groups/" + str(group_id), body)
+        parsed = json.loads(result)
+
+        if "success" in parsed[0]:
+            return "success"
+        else:
+            raise GroupError("Error, invalid response: {}".format(result))
 
     def set_group_state(self):
         pass
@@ -121,3 +143,12 @@ class Action():
         print("ct :" + str(self.ct))
         print("xy :")
         print(self.xy)
+
+
+class Error(Exception):
+    pass
+
+
+class GroupError(Error):
+    def __init__(self, message):
+        self.message = message
