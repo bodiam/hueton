@@ -42,9 +42,12 @@ class TestGroupsApi(unittest.TestCase):
         "scenes": {     }
         }''')
 
-        groups = self.api.get_group_attributes(1)
+        group = self.api.get_group_attributes(1)
 
-        groups.print_details()
+        self.assertEqual(group.id, 1)
+        self.assertEqual(group.name, "bedroom")
+
+
 
     def test_set_group_attributes(self, mock_requests):
         mock_requests.put.return_value = MockResponse(text='''

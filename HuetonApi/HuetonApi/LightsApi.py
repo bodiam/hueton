@@ -124,13 +124,10 @@ class Scan:
 
 
 class Light:
-    def __init__(self, light_id, name=""):
-        self.id = light_id
+    def __init__(self, id, name = None):
+        self.id = id
         self.name = name
 
-    def print_details(self):
-        print("Id :" + str(self.id))
-        print("Name :" + self.name)
 
 class LightState:
     state = type = name = modelid = swversion = pointsymbol = None
