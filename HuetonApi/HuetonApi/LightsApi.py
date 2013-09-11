@@ -97,7 +97,7 @@ class LightsApi(HueApi):
         """
         Used to rename lights. A light can have its name changed when in any state, including when it is unreachable or off.
 
-        If the name is already taken a space and number will be appended by the bridge e.g. “Bedroom Light 1”.
+        If the name is already taken a space and number will be appended by the bridge e.g. ���Bedroom Light 1���.
         """
         pass
 
@@ -124,10 +124,13 @@ class Scan:
 
 
 class Light:
-    def __init__(self, id, name):
-        self.id = id
+    def __init__(self, light_id, name=""):
+        self.id = light_id
         self.name = name
 
+    def print_details(self):
+        print("Id :" + str(self.id))
+        print("Name :" + self.name)
 
 class LightState:
     state = type = name = modelid = swversion = pointsymbol = None
