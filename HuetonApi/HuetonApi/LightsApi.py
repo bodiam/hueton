@@ -104,7 +104,7 @@ class LightsApi(HueApi):
         """
 
         payload = json.dumps({"name": name})
-        result = self.hue_put("/lights/{}".format(name), payload)
+        result = self.hue_put("/lights/{}".format(id), payload)
         parsed = json.loads(result)
 
         if "success" in parsed[0]:
@@ -113,11 +113,31 @@ class LightsApi(HueApi):
             raise LightError("Error, invalid response: {}".format(result))
 
 
-    def set_light_state(self, id):
+    def set_light_state(self, id, light_state):
         """
         Allows the user to turn the light on and off, modify the hue and effects.
         """
-        pass
+
+        #TODO: convert lightstate to json
+
+        payload = json.dumps({
+            "hue": 50000,
+            "on": True,
+            "bri": 200
+        })
+        result = self.hue_put("/lights/{}/state".format(id), payload)
+        parsed = json.loads(result)
+
+        if "success" in parsed[0]:
+            return parsed[0]["success"]["/lights/{}/state/bri".format(id)]
+        else:
+            raise LightError("Error, invalid response: {}".format(result))
+
+
+
+def enum(*sequential, **named):
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    return type('Enum', (), enums)
 
 
 class Error(Exception):
@@ -139,6 +159,12 @@ class Light:
     def __init__(self, id, name=None):
         self.id = id
         self.name = name
+
+
+class LightStateCommand:
+    def __init__(self=None, on=None, brightness=None, hue=None, saturation=None, xy=None, color_temperature=None,
+                 alert=None, effect=None, transitiontime=None):
+        vars(self).update(locals())
 
 
 class LightState:

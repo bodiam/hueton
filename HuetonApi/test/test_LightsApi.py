@@ -1,7 +1,7 @@
 import unittest
 
 from unittest.mock import patch
-from HuetonApi.LightsApi import LightsApi, LightError
+from HuetonApi.LightsApi import LightsApi, LightError, LightState, LightStateCommand
 from test.MockResponse import MockResponse
 
 
@@ -97,6 +97,23 @@ class MyTestCase(unittest.TestCase):
         name = self.api.rename(1, "Bedroom Light")
 
         self.assertEqual("Bedroom Light", name)
+
+    def test_set_light_state(self, mock_requests):
+        mock_requests.put.return_value = MockResponse(text='''
+        [
+            {"success":{"/lights/1/state/bri":200}},
+            {"success":{"/lights/1/state/on":true}},
+            {"success":{"/lights/1/state/hue":50000}}
+        ]
+        ''')
+
+        light_state = LightStateCommand(
+            transitiontime=1
+        )
+
+        self.api.set_light_state(1, light_state)
+
+
 
 
 
