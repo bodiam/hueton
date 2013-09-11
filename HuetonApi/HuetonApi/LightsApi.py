@@ -44,7 +44,7 @@ class LightsApi(HueApi):
         if "success" in parsed[0]:
             return parsed[0]["success"]["/lights"]
         else:
-            raise SearchError("Error, invalid response: {}".format(result))
+            raise LightError("Error, invalid response: {}".format(result))
 
 
     def get_light_attributes_and_state(self, id):
@@ -97,9 +97,21 @@ class LightsApi(HueApi):
         """
         Used to rename lights. A light can have its name changed when in any state, including when it is unreachable or off.
 
-        If the name is already taken a space and number will be appended by the bridge e.g. ���Bedroom Light 1���.
+        If the name is already taken a space and number will be appended by the bridge e.g. 'Bedroom Light 1'.
+
+        Example:
+        [{"success":{"/lights/1/name":"Bedroom Light"}}]
         """
-        pass
+
+        payload = json.dumps({"name": name})
+        result = self.hue_put("/lights/{}".format(name), payload)
+        parsed = json.loads(result)
+
+        if "success" in parsed[0]:
+            return parsed[0]["success"]["/lights/{}/name".format(id)]
+        else:
+            raise LightError("Error, invalid response: {}".format(result))
+
 
     def set_light_state(self, id):
         """
@@ -112,7 +124,7 @@ class Error(Exception):
     pass
 
 
-class SearchError(Error):
+class LightError(Error):
     def __init__(self, message):
         self.message = message
 
@@ -124,7 +136,7 @@ class Scan:
 
 
 class Light:
-    def __init__(self, id, name = None):
+    def __init__(self, id, name=None):
         self.id = id
         self.name = name
 

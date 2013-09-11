@@ -1,7 +1,7 @@
 import unittest
 
 from unittest.mock import patch
-from HuetonApi.LightsApi import LightsApi, SearchError
+from HuetonApi.LightsApi import LightsApi, LightError
 from test.MockResponse import MockResponse
 
 
@@ -49,7 +49,7 @@ class MyTestCase(unittest.TestCase):
         [ { "error": { "/lights": "Searching for new devices" } } ]
         ''')
 
-        self.assertRaisesRegexp(SearchError, ".*Searching for new devices.*", self.api.search_for_new_lights)
+        self.assertRaisesRegexp(LightError, ".*Searching for new devices.*", self.api.search_for_new_lights)
 
     def test_get_light_attribute_and_state(self, mock_requests):
         mock_requests.get.return_value = MockResponse(text='''
@@ -88,6 +88,16 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual("Living Colors", light_state.type)
         self.assertEqual("LC 1", light_state.name)
         self.assertEqual("LC0015", light_state.modelid)
+
+    def test_rename(self, mock_requests):
+        mock_requests.put.return_value = MockResponse(text='''
+        [{"success":{"/lights/1/name":"Bedroom Light"}}]
+        ''')
+
+        name = self.api.rename(1, "Bedroom Light")
+
+        self.assertEqual("Bedroom Light", name)
+
 
 
 if __name__ == '__main__':
