@@ -87,7 +87,7 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual("Living Colors", light_state.type)
         self.assertEqual("LC 1", light_state.name)
-        self.assertEqual("LC0015", light_state.modelid)
+        self.assertEqual("LC0015", light_state.model_id)
 
     def test_rename(self, mock_requests):
         mock_requests.put.return_value = MockResponse(text='''
@@ -107,13 +107,16 @@ class MyTestCase(unittest.TestCase):
         ]
         ''')
 
-        light_state = LightStateCommand(
-            transitiontime=1
+        command = LightStateCommand(
+            hue=50000,
+            transition_time=1
         )
 
-        self.api.set_light_state(1, light_state)
+        light_state_result = self.api.set_light_state(1, command)
 
-
+        self.assertEqual(200, light_state_result.brightness)
+        self.assertTrue(light_state_result.on)
+        self.assertEqual(50000, light_state_result.hue)
 
 
 

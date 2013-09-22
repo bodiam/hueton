@@ -46,7 +46,6 @@ class LightsApi(HueApi):
         else:
             raise LightError("Error, invalid response: {}".format(result))
 
-
     def get_light_attributes_and_state(self, id):
         """
         Gets the attributes and state of a given light.
@@ -84,12 +83,13 @@ class LightsApi(HueApi):
         result = self.hue_get("/lights/" + str(id))
         parsed = json.loads(result)
 
-        light_state = LightState()
-        light_state.type = parsed["type"]
-        light_state.name = parsed["name"]
-        light_state.modelid = parsed["modelid"]
-        light_state.swversion = parsed["swversion"]
-        light_state.state = State()
+        light_state = LightState(
+            type=parsed["type"],
+            name=parsed["name"],
+            model_id=parsed["modelid"],
+            sw_version=parsed["swversion"],
+            state=State()
+        )
 
         return light_state
 
@@ -112,27 +112,33 @@ class LightsApi(HueApi):
         else:
             raise LightError("Error, invalid response: {}".format(result))
 
-
     def set_light_state(self, id, light_state):
         """
         Allows the user to turn the light on and off, modify the hue and effects.
         """
 
-        #TODO: convert lightstate to json
+        input_map = vars(light_state)
+        payload = dict((key, value) for key, value in input_map.items() if key not in ['self'] and value is not None)
 
-        payload = json.dumps({
-            "hue": 50000,
-            "on": True,
-            "bri": 200
-        })
         result = self.hue_put("/lights/{}/state".format(id), payload)
         parsed = json.loads(result)
 
-        if "success" in parsed[0]:
-            return parsed[0]["success"]["/lights/{}/state/bri".format(id)]
-        else:
-            raise LightError("Error, invalid response: {}".format(result))
+        api_to_property_name_mapping = {
+            'bri': 'brightness',
+            'sat': 'saturation',
+            'transitiontime': 'transition_time'
+        }
 
+        result = LightStateCommandResult()
+
+        for call_result in parsed:
+            if 'success' in call_result:
+                url, state = call_result['success'].popitem()
+                api_key = url[url.rfind('/') + 1:]
+                propertyName = api_to_property_name_mapping.get(api_key, api_key)
+                setattr(result, propertyName, state)
+
+        return result
 
 
 def enum(*sequential, **named):
@@ -162,13 +168,18 @@ class Light:
 
 
 class LightStateCommand:
-    def __init__(self=None, on=None, brightness=None, hue=None, saturation=None, xy=None, color_temperature=None,
-                 alert=None, effect=None, transitiontime=None):
+    def __init__(self, on=None, brightness=None, hue=None, saturation=None, xy=None, color_temperature=None,
+                 alert=None, effect=None, transition_time=None):
         vars(self).update(locals())
 
 
+class LightStateCommandResult(LightStateCommand):
+    pass
+
+
 class LightState:
-    state = type = name = modelid = swversion = pointsymbol = None
+    def __init__(self, state=None, type=None, name=None, model_id=None, sw_version=None, point_symbol=None):
+        vars(self).update(locals())
 
 
 #     "type": "Living Colors",
@@ -188,7 +199,10 @@ class LightState:
 
 
 class State:
-    state = hue = effect = alert = bri = sat = ct = xy = reachable = colormode = None
+    def __init__(self, hue=None, on=None, effect=None, alert=None, brightness=None, saturation=None, ct=None, xy=None, reachable=None,
+                 color_mode=None):
+        vars(self).update(locals())
+
 
 #     "hue": 50000,
 #     "on": true,
