@@ -23,12 +23,20 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(2, len(lights))
 
+
     def test_get_new_lights(self, mock_requests):
-        mock_requests.get.return_value = MockResponse(text='''{
+
+        response = MockResponse(text='''{
         "7": {"name": "Hue Lamp 7"},
         "8": {"name": "Hue Lamp 8"},
         "lastscan": "2012-10-29T12:00:00"
         }''')
+
+        def check_parameters(*args, **kwargs):
+            self.assertEqual('http://192.168.2.196/api/newdeveloper/lights/new', args[0])
+            return response
+
+        mock_requests.get.side_effect = check_parameters
 
         scan = self.api.get_new_lights()
 

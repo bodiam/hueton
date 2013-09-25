@@ -80,6 +80,9 @@ class LightsApi(HueApi):
             }
         }
         """
+
+        # TODO: add all other attributes
+
         result = self.hue_get("/lights/" + str(id))
         parsed = json.loads(result)
 
