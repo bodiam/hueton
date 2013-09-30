@@ -2,6 +2,7 @@ import unittest
 
 from unittest.mock import patch
 from HuetonApi.GroupsApi import GroupsApi
+from HuetonApi.GroupsApi import Action
 from test.MockResponse import MockResponse
 
 # Test for GroupsApi Class
@@ -47,8 +48,6 @@ class TestGroupsApi(unittest.TestCase):
         self.assertEqual(group.id, 1)
         self.assertEqual(group.name, "bedroom")
 
-
-
     def test_set_group_attributes(self, mock_requests):
         mock_requests.put.return_value = MockResponse(text='''
         [ {"success":{"/groups/1/lights":["1"]}},
@@ -62,7 +61,18 @@ class TestGroupsApi(unittest.TestCase):
 
         self.assertEqual("success", result)
 
-#    def test_set_group_state(self):
+    def test_set_group_state(self, mock_requests):
+        mock_requests.put.return_value = MockResponse(text='''
+        [ {"success":{"/groups/1/action/on": true}},
+          {"success":{"/groups/1/action/effect":"colorloop"}},
+          {"success":{"/groups/1/action/hue":6000}}]''')
+
+        group_id = 1
+        action = Action(True, 6000)
+        effect = 'colorloop'
+        result = self.api.set_group_state(group_id, action, effect)
+
+        self.assertEqual("success", result)
 
 #    def test_delete_group(self):
 

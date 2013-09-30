@@ -87,10 +87,68 @@ class GroupsApi():
         else:
             raise GroupError("Error, invalid response: {}".format(result))
 
-    def set_group_state(self):
-        pass
+    def set_group_state(self, group_id, action=None, alert=None, effect=None, transition_time=None):
+        """
+        Modifies the state of all lights in a group.
+
+        User created groups will have an ID of 1 or higher; 
+        however a special group with an ID of 0 also exists 
+        containing all the lamps known by the bridge.
+        """
+        properties = []
+
+        if action is not None:
+            if action.on is not None:
+                on = ' "on" : ' + str(action.on)
+                properties.append(on)
+            if action.bri is not None:
+                bri = ' "bri" : ' + action.bri
+                properties.append(bri)
+            if action.hue is not None:
+                hue = ' "hue" : ' + str(action.hue)
+                properties.append(hue)
+            if action.sat is not None:
+                sat = ' "sat" : ' + action.sat
+                properties.append(sat)
+            if action.xy is not None:
+                xy = ' "xy" : ' + action.xy
+                properties.append(xy)
+            if action.ct is not None:
+                ct = ' "ct" : ' + action.ct
+                properties.append(ct)
+
+        if alert is not None:
+            alert = ' "alert" : ' + alert
+            properties.append(alert)
+
+        if effect is not None:
+            effect = ' "effect" : ' + effect
+            properties.append(effect)
+
+        if transition_time is not None:
+            transitiontime = ' "transitiontime" : ' + transition_time
+            properties.append(transitiontime)
+
+        """ build the body message """
+        if len(properties) > 0:
+            txt_body = ', '.join(properties)
+            #print(txt_body)
+            body = '{ ' + txt_body + '  }'
+
+            result = self.api.hue_put("/groups/" + str(group_id) + '/action', body)
+            parsed = json.loads(result)
+
+            if "success" in parsed[0]:
+                return "success"
+            else:
+                raise GroupError("Error, invalid response: {}".format(result))
+        else:
+            raise GroupError("Error, no parameters found: ")
 
     def delete_group(self):
+        """
+        NOT SUPORTED
+        """
         pass
 
 
@@ -110,7 +168,7 @@ class Scene():
 
 
 class Action():
-    def __init__(self, on, hue, effect, bri, sat, ct, xy):
+    def __init__(self, on=None, hue=None, effect=None, bri=None, sat=None, ct=None, xy=None):
         self.on = on
         self.hue = hue
         self.effect = effect
