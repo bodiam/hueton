@@ -1,15 +1,14 @@
 import unittest
 
 from unittest.mock import patch
-from HuetonApi.LightsApi import LightsApi, LightError, LightState, LightStateCommand
+from HuetonApi.LightsApi import LightsApi, LightError, LightStateCommand
 from test.MockResponse import MockResponse
 
 
 @patch('HuetonApi.HueApi.requests')
-class MyTestCase(unittest.TestCase):
+class TestLightsApi(unittest.TestCase):
     def setUp(self):
-        lights_api = LightsApi()
-        lights_api.init('newdeveloper')
+        lights_api = LightsApi('newdeveloper')
 
         self.api = lights_api
 

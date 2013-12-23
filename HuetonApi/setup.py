@@ -52,6 +52,7 @@ setup(
     package_dir={'HuetonApi': 'HuetonApi'},
     include_package_data=True,
     install_requires=[
+
     ],
     license='MIT',
     zip_safe=False,

@@ -16,7 +16,7 @@ from HuetonApi.HuetonApi import *
 
 
 @patch('HuetonApi.HueApi.requests')
-class TestHuetonapi(unittest.TestCase):
+class TestHuetonApi(unittest.TestCase):
     def test_hello_world(self, mock_requests):
         self.assertEquals(4, 4)
 

@@ -3,7 +3,7 @@ import json
 
 
 class LightsApi(HueApi):
-    def init(self, developer_name):
+    def __init__(self, developer_name):
         print("Hello %s" % developer_name)
         self.base_location = "http://192.168.2.196/api/"
         self.location = self.base_location + developer_name
