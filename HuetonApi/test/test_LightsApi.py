@@ -8,7 +8,7 @@ from test.MockResponse import MockResponse
 @patch('HuetonApi.HueApi.requests')
 class TestLightsApi(unittest.TestCase):
     def setUp(self):
-        lights_api = LightsApi('newdeveloper')
+        lights_api = LightsApi('hueton', 'http://192.168.2.196/api/')
 
         self.api = lights_api
 
@@ -32,7 +32,7 @@ class TestLightsApi(unittest.TestCase):
         }''')
 
         def check_parameters(*args, **kwargs):
-            self.assertEqual('http://192.168.2.196/api/newdeveloper/lights/new', args[0])
+            self.assertEqual('http://192.168.2.196/api/hueton/lights/new', args[0])
             return response
 
         mock_requests.get.side_effect = check_parameters

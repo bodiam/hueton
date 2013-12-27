@@ -11,7 +11,7 @@ from test.MockResponse import MockResponse
 @patch('HuetonApi.HueApi.requests')
 class TestGroupsApi(unittest.TestCase):
     def setUp(self):
-        developer = 'newdeveloper'
+        developer = 'hueton'
         bridge = 'http://192.168.2.196/api/'
         groups_api = GroupsApi(developer, bridge)
         self.api = groups_api

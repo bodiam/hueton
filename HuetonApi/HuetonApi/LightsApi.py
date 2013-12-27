@@ -3,11 +3,6 @@ import json
 
 
 class LightsApi(HueApi):
-    def __init__(self, developer_name):
-        print("Hello %s" % developer_name)
-        self.base_location = "http://192.168.2.196/api/"
-        self.location = self.base_location + developer_name
-        self.developer_name = developer_name
 
     def get_all_lights(self):
         """
@@ -155,8 +150,10 @@ class Error(Exception):
 
 class LightError(Error):
     def __init__(self, message):
+        # if(errors):
+        #     self.message = "hello world" #message.format(errors[0]['error']['description'])
+        # else:
         self.message = message
-
 
 class Scan:
     def __init__(self, lastscan):
@@ -169,6 +166,8 @@ class Light:
         self.id = id
         self.name = name
 
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
 
 class LightStateCommand:
     def __init__(self, on=None, brightness=None, hue=None, saturation=None, xy=None, color_temperature=None,

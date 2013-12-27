@@ -3,7 +3,7 @@ import json
 
 
 class HueApi:
-    def init(self, developer_name, location):
+    def __init__(self, developer_name, location):
         print("Hello %s" % developer_name)
         self.base_location = location
         self.location = self.base_location + developer_name
@@ -39,3 +39,7 @@ class HueApi:
 
     def hue_post(self, function, payload=None):
         return requests.post(self.location + function, data=payload).text
+
+    # todo: temporary hack
+    def raw_post(self, payload=None):
+        return requests.post(self.base_location, data=payload).text

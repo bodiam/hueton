@@ -5,7 +5,7 @@ import json
 # GroupsApi Class
 
 
-class GroupsApi():
+class GroupsApi(HueApi):
     """
     Gets a list of all groups that have been added to the bridge.
     A group is a list of lights that can be created,
@@ -17,17 +17,12 @@ class GroupsApi():
     the firmware so only control of groups/0 is
     supported.
     """
-
-    def __init__(self, developer_name, location):
-        self.api = HueApi()
-        self.api.init(developer_name, location)
-
     def get_all_groups(self):
         """
         Returns a list of all groups in the system, each group has a name
         and unique identification number.
         """
-        result = self.api.hue_get("/groups")
+        result = self.hue_get("/groups")
         parsed = json.loads(result)
         return [Group(id, parsed[id]["name"]) for id in parsed]
 
@@ -40,7 +35,7 @@ class GroupsApi():
         """
         Gets the name, light membership and last command for a given group.
         """
-        result = self.api.hue_get("/groups/" + str(group_id))
+        result = self.hue_get("/groups/" + str(group_id))
         parsed = json.loads(result)
 
         #Group Name
@@ -79,7 +74,7 @@ class GroupsApi():
         array_lights = '["' + '", "'.join(lights_id) + '"]'
         body = '{"name":"' + group_name + '","lights":' + array_lights + '}'
 
-        result = self.api.hue_put("/groups/" + str(group_id), body)
+        result = self.hue_put("/groups/" + str(group_id), body)
         parsed = json.loads(result)
 
         if "success" in parsed[0]:
@@ -129,13 +124,13 @@ class GroupsApi():
             transitiontime = ' "transitiontime" : ' + transition_time
             properties.append(transitiontime)
 
-        """ build the body message """
+        # build the body message
         if len(properties) > 0:
             txt_body = ', '.join(properties)
             #print(txt_body)
             body = '{ ' + txt_body + '  }'
 
-            result = self.api.hue_put("/groups/" + str(group_id) + '/action', body)
+            result = self.hue_put("/groups/" + str(group_id) + '/action', body)
             parsed = json.loads(result)
 
             if "success" in parsed[0]:

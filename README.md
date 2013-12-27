@@ -6,3 +6,7 @@ hueton
 
 Currently a Work in Progress API for the Philips Hue, but hopefully in the future a collection of Python programs which
 will use the API.
+
+**Run the tests**
+
+`python setup.py test`
