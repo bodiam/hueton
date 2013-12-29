@@ -8,8 +8,7 @@ class LightsApi(HueApi):
         """
         Gets a list of all lights that have been discovered by the bridge.
         """
-        result = self.hue_get("/lights")
-        parsed = json.loads(result)
+        parsed = self.hue_get("/lights")
 
         return [Light(id, parsed[id]["name"]) for id in parsed]
 
@@ -18,8 +17,7 @@ class LightsApi(HueApi):
         Gets a list of lights that were discovered the last time a search for new lights was performed.
         The list of new lights is always deleted when a new search is started.
         """
-        result = self.hue_get("/lights/new")
-        parsed = json.loads(result)
+        parsed = self.hue_get("/lights/new")
 
         scan = Scan(lastscan=parsed["lastscan"])
         parsed.pop("lastscan", None)
@@ -33,13 +31,12 @@ class LightsApi(HueApi):
 
         Example: [ { "success": { "/lights": "Searching for new devices" } } ]
         """
-        result = self.hue_post("/lights")
-        parsed = json.loads(result)
+        parsed = self.hue_post("/lights")
 
         if "success" in parsed[0]:
             return parsed[0]["success"]["/lights"]
         else:
-            raise LightError("Error, invalid response: {}".format(result))
+            raise LightError("Error, invalid response: {}".format(parsed))
 
     def get_light_attributes_and_state(self, id):
         """
@@ -78,8 +75,7 @@ class LightsApi(HueApi):
 
         # TODO: add all other attributes
 
-        result = self.hue_get("/lights/" + str(id))
-        parsed = json.loads(result)
+        parsed = self.hue_get("/lights/" + str(id))
 
         light_state = LightState(
             type=parsed["type"],
@@ -102,13 +98,12 @@ class LightsApi(HueApi):
         """
 
         payload = json.dumps({"name": name})
-        result = self.hue_put("/lights/{}".format(id), payload)
-        parsed = json.loads(result)
+        parsed = self.hue_put("/lights/{}".format(id), payload)
 
         if "success" in parsed[0]:
             return parsed[0]["success"]["/lights/{}/name".format(id)]
         else:
-            raise LightError("Error, invalid response: {}".format(result))
+            raise LightError("Error, invalid response: {}".format(parsed))
 
     def set_light_state(self, id, light_state):
         """
@@ -118,8 +113,7 @@ class LightsApi(HueApi):
         input_map = vars(light_state)
         payload = dict((key, value) for key, value in input_map.items() if key not in ['self'] and value is not None)
 
-        result = self.hue_put("/lights/{}/state".format(id), payload)
-        parsed = json.loads(result)
+        parsed = self.hue_put("/lights/{}/state".format(id), payload)
 
         api_to_property_name_mapping = {
             'bri': 'brightness',

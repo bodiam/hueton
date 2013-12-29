@@ -32,21 +32,9 @@ class ConfigurationApi(HueApi):
 
     def get_configuration(self):
 
-        result = self.hue_get("/config")
-        parsed = json.loads(result)
+        parsed = self.hue_get("/config")
 
-        result = Configuration(**parsed)
-
-        # for k, v in parsed.items():
-        #     result.
-        #
-        #         api_key = url[url.rfind('/') + 1:]
-        #         propertyName = api_to_property_name_mapping.get(api_key, api_key)
-        #         setattr(result, propertyName, state)
-        #
-        return result
-
-
+        return Configuration(**parsed)
 
 
 class Configuration:

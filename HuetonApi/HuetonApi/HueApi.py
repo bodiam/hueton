@@ -10,8 +10,7 @@ class HueApi:
         self.developer_name = developer_name
 
     def hue_get_lamp_state(self, lamp_number):
-        result = self.hue_get("/lights/" + lamp_number)
-        parsed = json.loads(result)
+        parsed = self.hue_get("/lights/" + lamp_number)
         state = parsed['state']['on']
         return state
 
@@ -32,12 +31,21 @@ class HueApi:
         self.hue_put("/lights/" + lamp_number + "/state", payload)
 
     def hue_get(self, function):
-        return requests.get(self.location + function).text
+        return json.loads(requests.get(self.location + function).text)
 
     def hue_put(self, function, payload):
-        return requests.put(self.location + function, data=payload).text
+        return json.loads(requests.put(self.location + function, data=payload).text)
 
     def hue_post(self, function, payload=None):
+        return json.loads(requests.post(self.location + function, data=payload).text)
+
+    def hue_gets(self, function):
+        return requests.get(self.location + function).text
+
+    def hue_puts(self, function, payload):
+        return requests.put(self.location + function, data=payload).text
+
+    def hue_posts(self, function, payload=None):
         return requests.post(self.location + function, data=payload).text
 
     # todo: temporary hack

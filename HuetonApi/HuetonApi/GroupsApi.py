@@ -22,8 +22,7 @@ class GroupsApi(HueApi):
         Returns a list of all groups in the system, each group has a name
         and unique identification number.
         """
-        result = self.hue_get("/groups")
-        parsed = json.loads(result)
+        parsed = self.hue_get("/groups")
         return [Group(id, parsed[id]["name"]) for id in parsed]
 
     def create_group(self):
@@ -35,8 +34,7 @@ class GroupsApi(HueApi):
         """
         Gets the name, light membership and last command for a given group.
         """
-        result = self.hue_get("/groups/" + str(group_id))
-        parsed = json.loads(result)
+        parsed = self.hue_get("/groups/" + str(group_id))
 
         #Group Name
         group_name = parsed["name"]
@@ -74,8 +72,7 @@ class GroupsApi(HueApi):
         array_lights = '["' + '", "'.join(lights_id) + '"]'
         body = '{"name":"' + group_name + '","lights":' + array_lights + '}'
 
-        result = self.hue_put("/groups/" + str(group_id), body)
-        parsed = json.loads(result)
+        parsed = self.hue_put("/groups/" + str(group_id), body)
 
         if "success" in parsed[0]:
             return "success"
@@ -130,8 +127,7 @@ class GroupsApi(HueApi):
             #print(txt_body)
             body = '{ ' + txt_body + '  }'
 
-            result = self.hue_put("/groups/" + str(group_id) + '/action', body)
-            parsed = json.loads(result)
+            parsed = self.hue_put("/groups/" + str(group_id) + '/action', body)
 
             if "success" in parsed[0]:
                 return "success"

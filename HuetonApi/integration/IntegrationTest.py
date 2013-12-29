@@ -42,3 +42,4 @@ class IntegrationTest(unittest.TestCase):
             self.logger.debug("Turn lights on")
             [self.light_api.hue_turn_lamp_on(light.id) for light in lights]
             time.sleep(1)
+
