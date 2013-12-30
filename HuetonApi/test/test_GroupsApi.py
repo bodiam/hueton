@@ -1,13 +1,10 @@
 import unittest
 
 from unittest.mock import patch
-from HuetonApi.GroupsApi import GroupsApi
-from HuetonApi.GroupsApi import Action
+from HuetonApi.GroupsApi import GroupsApi, Action
 from test.MockResponse import MockResponse
 
 # Test for GroupsApi Class
-
-
 @patch('HuetonApi.HueApi.requests')
 class TestGroupsApi(unittest.TestCase):
     def setUp(self):

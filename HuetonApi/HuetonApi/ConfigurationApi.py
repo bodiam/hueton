@@ -33,12 +33,23 @@ class ConfigurationApi(HueApi):
     def get_configuration(self):
 
         parsed = self.hue_get("/config")
-
         return Configuration(**parsed)
+
+    def modify_configuration(self, configuration):
+        payload = json.dumps(configuration, default=lambda c: c.__dict__)
+        parsed = self.hue_put("/config", payload)
+        return Configuration(**parsed)
+
+    def delete_user_from_whitelist(self):
+        pass
+
+    def get_full_state(self):
+        pass
+
 
 
 class Configuration:
-    def __init__(self, proxyport=None, UTC=None, name=None, swupdate=None, whitelist=None, swversion=None, proxyaddress=None,
+    def __init__(self, proxyport=None, utc=None, name=None, swupdate=None, whitelist=None, swversion=None, proxyaddress=None,
                  mac=None, linkbutton=None, ipaddress=None, netmask=None, gateway=None, dhcp=None, portalservices=None):
         vars(self).update(locals())
 
