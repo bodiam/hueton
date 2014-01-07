@@ -3,7 +3,6 @@ import json
 
 
 class LightsApi(HueApi):
-
     def get_all_lights(self):
         """
         Gets a list of all lights that have been discovered by the bridge.
@@ -24,6 +23,28 @@ class LightsApi(HueApi):
 
         scan.lights.extend([Light(id, parsed[id]["name"]) for id in parsed])
         return scan
+
+    def set_color(self, id, r, g, b):
+        xy = self.rgb2xy(r, g, b)
+
+        print("xy " + str(xy))
+
+        command = LightStateCommand(
+            xy=[xy[0], xy[1]],
+        )
+
+        self.set_light_state(id, command)
+
+    @staticmethod
+    def rgb2xy(r, g, b):
+        # https://github.com/aleroddepaz/pyhue/blob/master/src/pyhue.py
+        X = 0.412453 * r + 0.357580 * g + 0.180423 * b
+        Y = 0.212671 * r + 0.715160 * g + 0.072169 * b
+        Z = 0.019334 * r + 0.119193 * g + 0.950227 * b
+        x = X / (X + Y + Z)
+        y = Y / (X + Y + Z)
+
+        return x, y
 
     def search_for_new_lights(self):
         """
@@ -105,13 +126,13 @@ class LightsApi(HueApi):
         else:
             raise LightError("Error, invalid response: {}".format(parsed))
 
-    def set_light_state(self, id, light_state):
+    def set_light_state(self, id, light_state_command):
         """
         Allows the user to turn the light on and off, modify the hue and effects.
         """
 
-        input_map = vars(light_state)
-        payload = dict((key, value) for key, value in input_map.items() if key not in ['self'] and value is not None)
+        input_map = vars(light_state_command)
+        payload = json.dumps(dict((key, value) for key, value in input_map.items() if key not in ['self'] and value is not None))
 
         parsed = self.hue_put("/lights/{}/state".format(id), payload)
 
@@ -127,8 +148,8 @@ class LightsApi(HueApi):
             if 'success' in call_result:
                 url, state = call_result['success'].popitem()
                 api_key = url[url.rfind('/') + 1:]
-                propertyName = api_to_property_name_mapping.get(api_key, api_key)
-                setattr(result, propertyName, state)
+                property_name = api_to_property_name_mapping.get(api_key, api_key)
+                setattr(result, property_name, state)
 
         return result
 
@@ -149,6 +170,7 @@ class LightError(Error):
         # else:
         self.message = message
 
+
 class Scan:
     def __init__(self, lastscan):
         self.lastscan = lastscan
@@ -163,6 +185,7 @@ class Light:
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
+
 class LightStateCommand:
     def __init__(self, on=None, brightness=None, hue=None, saturation=None, xy=None, color_temperature=None,
                  alert=None, effect=None, transition_time=None):
@@ -176,7 +199,6 @@ class LightStateCommandResult(LightStateCommand):
 class LightState:
     def __init__(self, state=None, type=None, name=None, model_id=None, sw_version=None, point_symbol=None):
         vars(self).update(locals())
-
 
 #     "type": "Living Colors",
 # "name": "LC 1",
@@ -195,10 +217,10 @@ class LightState:
 
 
 class State:
-    def __init__(self, hue=None, on=None, effect=None, alert=None, brightness=None, saturation=None, ct=None, xy=None, reachable=None,
+    def __init__(self, hue=None, on=None, effect=None, alert=None, brightness=None, saturation=None, ct=None, xy=None,
+                 reachable=None,
                  color_mode=None):
         vars(self).update(locals())
-
 
 #     "hue": 50000,
 #     "on": true,

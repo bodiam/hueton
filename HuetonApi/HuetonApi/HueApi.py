@@ -31,7 +31,9 @@ class HueApi:
         self.hue_put("/lights/" + lamp_number + "/state", payload)
 
     def hue_get(self, function):
-        return json.loads(requests.get(self.location + function).text)
+        response = requests.get(self.location + function).text
+        print(response)
+        return json.loads(response)
 
     def hue_put(self, function, payload):
         return json.loads(requests.put(self.location + function, data=payload).text)

@@ -2,7 +2,7 @@ import unittest
 
 from unittest.mock import patch
 from test.MockResponse import MockResponse
-from HuetonApi.ConfigurationApi import ConfigurationApi
+from HuetonApi.ConfigurationApi import ConfigurationApi, Configuration
 
 # Test for GroupsApi Class
 @patch('HuetonApi.HueApi.requests')
@@ -16,7 +16,7 @@ class TestConfigurationApi(unittest.TestCase):
     def test_get_configuration(self, mock_requests):
         mock_requests.get.return_value = MockResponse(text='''{
     "proxyport": 0,
-    "utc": "2012-10-29T12:00:00",
+    "UTC": "2012-10-29T12:00:00",
     "name": "Smartbridge 1",
     "swupdate": {
         "updatestate":1,
@@ -45,9 +45,20 @@ class TestConfigurationApi(unittest.TestCase):
         configuration = self.api.get_configuration()
 
         self.assertEqual(0, configuration.proxyport)
-        self.assertEqual("2012-10-29T12:00:00", configuration.utc)
+        self.assertEqual("2012-10-29T12:00:00", configuration.UTC)
         self.assertEqual("Smartbridge 1", configuration.name)
+        self.assertEqual("2010-10-17T01:23:20", configuration.whitelist['1234567890']["last use date"])
 
     def test_modify_configuration(self, mock_requests):
-        pass
+        mock_requests.put.return_value = MockResponse(text='''{
+    "name": "Updated"
+}''')
+
+        configuration = Configuration(name="Test 123")
+
+        result = self.api.modify_configuration(configuration)
+
+        self.assertEqual("Updated", result.name)
+
+
 

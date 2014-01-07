@@ -16,7 +16,7 @@ class ConfigurationApi(HueApi):
 
         max_attempts = 5
         for attempt in range(max_attempts):
-            print("Please press the link button on the bridge ({}/{})".format(attempt+1,max_attempts))
+            print("Please press the link button on the bridge ({}/{})".format(attempt + 1, max_attempts))
             result = self.raw_post(payload)
             parsed = json.loads(result)
 
@@ -36,7 +36,8 @@ class ConfigurationApi(HueApi):
         return Configuration(**parsed)
 
     def modify_configuration(self, configuration):
-        payload = json.dumps(configuration, default=lambda c: c.__dict__)
+        # payload = json.dumps(configuration, default=lambda c: c.__dict__)
+        payload = json.dumps(configuration.__dict__)
         parsed = self.hue_put("/config", payload)
         return Configuration(**parsed)
 
@@ -47,11 +48,10 @@ class ConfigurationApi(HueApi):
         pass
 
 
-
 class Configuration:
-    def __init__(self, proxyport=None, utc=None, name=None, swupdate=None, whitelist=None, swversion=None, proxyaddress=None,
+    def __init__(self, proxyport=None, UTC=None, name=None, swupdate=None, whitelist=None, swversion=None, proxyaddress=None,
                  mac=None, linkbutton=None, ipaddress=None, netmask=None, gateway=None, dhcp=None, portalservices=None):
-        vars(self).update(locals())
+        vars(self).update(dict([entry for entry in locals().items() if entry[0] is not 'self']))
 
 
 
