@@ -1,10 +1,16 @@
 import requests
 import json
 import sys
+import ConfigParser
 
 from collections import defaultdict
 
-location = "http://192.168.2.196/api/newdeveloper"
+config = ConfigParser.RawConfigParser()
+config.read('ConfigFile.properties')
+
+bridge = config.get('HuetonApi', 'bridge.ip');
+
+location = "http://"+ bridge +"/api/newdeveloper"
 
 #
 # Hue API
@@ -59,6 +65,7 @@ def show_menu():
     '3': [show_turn_lamps_on_off, 'Turn lamps on/off'],
     '4': [show_colorize_lamps, 'Colorize lamps'],
     '5': [use_leapmotion, 'Use leapmotion'],
+    '6': [show_bridge, 'Show bridge'],
     'E': [sys.exit, 'Exit']
     })
 
@@ -161,6 +168,9 @@ def use_leapmotion():
     print("Use leapmotion")
     show_menu()
 
+def show_bridge():
+    print("bridge :"+ bridge)
+    show_menu()
 
 def read_input(text):
     return input(text)
