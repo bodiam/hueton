@@ -1,0 +1,6 @@
+Lights API                              [erikp]
+Groups API
+Schedules API
+Configuration API
+Portal API
+Add regression test
