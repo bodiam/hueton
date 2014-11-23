@@ -5,9 +5,11 @@ import ConfigParser
 
 from collections import defaultdict
 
+#Load properties
 config = ConfigParser.RawConfigParser()
 config.read('ConfigFile.properties')
 
+#Set up properties configuration
 bridge = config.get('HuetonApi', 'bridge.ip');
 
 location = "http://"+ bridge +"/api/newdeveloper"
