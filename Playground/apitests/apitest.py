@@ -148,8 +148,6 @@ def show_turn_lamps_on_off():
 def get_input_lamp_number():
     print("")
     lamp_number = int(input("Please choose a lamp number (0=Exit menu): "))
-
-    print(lamp_number)
     
     if lamp_number == 0:
         show_menu()
